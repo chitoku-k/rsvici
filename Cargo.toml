@@ -1,0 +1,57 @@
+[package]
+name = "rsvici"
+version = "0.1.0"
+authors = ["Chitoku <odango@chitoku.jp>"]
+license = "MIT"
+description = "A client library for the VICI protocol"
+repository = "https://github.com/chitoku-k/rsvici"
+documentation = "https://docs.rs/rsvici/latest/rsvici/"
+keywords = ["vici"]
+edition = "2021"
+readme = "README.md"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies.async-stream]
+version = "0.3"
+
+[dependencies.bytes]
+version = "1.1"
+
+[dependencies.enum_index]
+version = "0.2"
+
+[dependencies.enum_index_derive]
+version = "0.2"
+
+[dependencies.futures-util]
+version = "0.3"
+
+[dependencies.serde]
+version = "1.0"
+
+[dependencies.serde_vici]
+version = "0.1"
+
+[dependencies.tokio]
+version = "1.16"
+features = ["io-util", "macros", "net", "rt-multi-thread", "sync"]
+
+[dependencies.tokio-stream]
+version = "0.1"
+
+[dev-dependencies.indexmap]
+version = "1.8"
+features = ["serde"]
+
+[dev-dependencies.pretty_assertions]
+version = "1.0"
+
+[dev-dependencies.serde]
+version = "1.0"
+features = ["derive", "std"]
+
+[dev-dependencies.tokio-test]
+version = "0.4"
