@@ -93,8 +93,8 @@ async fn subscribe() {
             3, 5, b'g', b'r', b'o', b'u', b'p', 0, 3, b'I', b'K', b'E',
             // level = 1
             3, 5, b'l', b'e', b'v', b'e', b'l', 0, 1, b'1',
-            // msg = 192.0.2.1 is itiniating a Main Mode IKE_SA
-            3, 3, b'm', b's', b'g', 0, 42, b'1', b'9', b'2', b'.', b'0', b'.', b'2', b'.', b'1', b' ', b'i', b's', b' ', b'i', b't', b'i', b'n', b'i', b'a', b't', b'i', b'n', b'g', b' ', b'a', b' ', b'M', b'a', b'i', b'n', b' ', b'M', b'o', b'd', b'e', b' ', b'I', b'K', b'E', b'_', b'S', b'A', 
+            // msg = 192.0.2.1 is initiating a Main Mode IKE_SA
+            3, 3, b'm', b's', b'g', 0, 42, b'1', b'9', b'2', b'.', b'0', b'.', b'2', b'.', b'1', b' ', b'i', b's', b' ', b'i', b'n', b'i', b't', b'i', b'a', b't', b'i', b'n', b'g', b' ', b'a', b' ', b'M', b'a', b'i', b'n', b' ', b'M', b'o', b'd', b'e', b' ', b'I', b'K', b'E', b'_', b'S', b'A',
         ])
         .read(&[
             // header
