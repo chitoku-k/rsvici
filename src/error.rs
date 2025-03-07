@@ -37,6 +37,7 @@ impl Error {
             | ErrorCode::HandlerClosedWhileStreaming(_) => Category::Closed,
             ErrorCode::UnknownCmd => Category::UnknownCmd,
             ErrorCode::UnknownEvent(_) => Category::UnknownEvent,
+            ErrorCode::CommandFailed(_) => Category::CmdFailure,
         }
     }
 
@@ -95,6 +96,8 @@ pub enum Category {
 
     /// The error was caused by an unknown event request.
     UnknownEvent,
+
+    CmdFailure,
 }
 
 impl From<io::Error> for Error {
@@ -117,6 +120,7 @@ impl From<Error> for io::Error {
             Category::Data => io::Error::new(io::ErrorKind::InvalidData, e),
             Category::Closed => io::Error::new(io::ErrorKind::BrokenPipe, e),
             Category::UnknownCmd | Category::UnknownEvent => io::Error::new(io::ErrorKind::Unsupported, e),
+            Category::CmdFailure => io::Error::new(io::ErrorKind::Other, e),
         }
     }
 }
@@ -154,6 +158,9 @@ pub(crate) enum ErrorCode {
 
     /// Unknown event has been requested.
     UnknownEvent(String),
+
+    /// Issued command failed.
+    CommandFailed(String)
 }
 
 impl Display for ErrorCode {
@@ -168,6 +175,7 @@ impl Display for ErrorCode {
             ErrorCode::UnexpectedPacket(ref packet_type) => f.write_fmt(format_args!("unexpected packet type {packet_type}")),
             ErrorCode::UnknownCmd => f.write_str("unknown command"),
             ErrorCode::UnknownEvent(ref event) => f.write_fmt(format_args!("unknown event {event}")),
+            ErrorCode::CommandFailed(ref reason) => f.write_fmt(format_args!("command failed - {reason}")),
         }
     }
 }
