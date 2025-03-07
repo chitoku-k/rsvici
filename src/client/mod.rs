@@ -32,7 +32,9 @@ type CommandSender = Sender<(Packet, Handler)>;
 type EventSender = Sender<(Packet, String, Registration, Handler)>;
 type ErrorHandlerSender = UnboundedSender<UnboundedSender<Error>>;
 
+
 #[derive(Deserialize)]
+/// A structure to handle all kind of CMD_RESPONSE
 struct Response {
     success: Option<bool>,
     errmsg: Option<String>
