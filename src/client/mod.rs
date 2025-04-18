@@ -188,6 +188,7 @@ impl Client {
 
         try_stream! {
             let (tx, mut rx) = mpsc::channel(1);
+            let cmd_response: Response;
 
             let req = Packet::from(PacketType::EventRegister(event.clone()), ())?;
             events
@@ -210,18 +211,8 @@ impl Client {
                         PacketType::CmdResponse => {
                             match packet.message::<Response>() {
                                 Ok(resp) => {
-                                    match resp.success {
-                                        Some(success) => {
-                                            if success {
-                                                break;
-                                            } else {
-                                                Err(Error::data(ErrorCode::CommandFailed(resp.errmsg.unwrap_or("unknown".to_string()))))?;
-                                            }
-                                        },
-                                        None => {
-                                            break;
-                                        }
-                                    }
+                                    cmd_response = resp;
+                                    break;
                                 },
                                 Err(e) => {
                                     Err(Error::from(e))?;
@@ -263,6 +254,21 @@ impl Client {
                 Some(Ok(_)) => {},
                 Some(Err(e)) => Err(e)?,
                 None => Err(Error::data(ErrorCode::ListenerClosed))?,
+            }
+
+            match cmd_response.success {
+                Some(true) => {},
+                Some(false) => {
+                    match cmd_response.errmsg {
+                        Some(errmsg) => {
+                            Err(Error::data(ErrorCode::CommandFailed(errmsg)))?;
+                        },
+                        None => {
+                            Err(Error::data(ErrorCode::CommandFailed("unknown".to_string())))?;
+                        }
+                    }
+                },
+                None => {},
             }
         }
     }
