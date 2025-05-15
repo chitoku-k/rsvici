@@ -1,6 +1,6 @@
 //! Failures to interact with the IKE daemon.
 
-use core::result;
+use core::{option::Option::None, result};
 use std::{
     error,
     fmt::{self, Debug, Display},
@@ -160,7 +160,7 @@ pub(crate) enum ErrorCode {
     UnknownEvent(String),
 
     /// Issued command failed.
-    CommandFailed(String)
+    CommandFailed(Option<String>),
 }
 
 impl Display for ErrorCode {
@@ -175,7 +175,10 @@ impl Display for ErrorCode {
             ErrorCode::UnexpectedPacket(ref packet_type) => f.write_fmt(format_args!("unexpected packet type {packet_type}")),
             ErrorCode::UnknownCmd => f.write_str("unknown command"),
             ErrorCode::UnknownEvent(ref event) => f.write_fmt(format_args!("unknown event {event}")),
-            ErrorCode::CommandFailed(ref reason) => f.write_fmt(format_args!("command failed - {reason}")),
+            ErrorCode::CommandFailed(ref reason) => match reason {
+                Some(errmsg) => f.write_fmt(format_args!("command failed: {errmsg}")),
+                None => f.write_fmt(format_args!("command failed")),
+            },
         }
     }
 }

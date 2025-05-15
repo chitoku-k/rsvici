@@ -1,3 +1,5 @@
+use core::option::Option::None;
+
 use rsvici::{Client, Error};
 
 use futures_util::{pin_mut, stream::TryStreamExt};
@@ -13,7 +15,7 @@ struct ControlLog {
     ikesa_name: String,
     #[serde(rename = "ikesa-uniqueid")]
     ikesa_uniqueid: u64,
-    msg: String
+    msg: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -107,7 +109,7 @@ async fn stream_request_with_success() {
         ike: "gw-gw".to_string(),
         child: "net-net".to_string(),
     };
-    
+
     let stream = client.stream_request::<Initiate, ControlLog>("initiate", "control-log", initiate);
     let actual: Vec<ControlLog> = stream.try_collect().await.unwrap();
 
@@ -203,7 +205,7 @@ async fn stream_request_with_failure() {
         ike: "gw-gw".to_string(),
         child: "net-net".to_string(),
     };
-    
+
     let stream = client.stream_request::<Initiate, ControlLog>("initiate", "control-log", initiate);
 
     pin_mut!(stream);
@@ -218,26 +220,21 @@ async fn stream_request_with_failure() {
             Err(e) => {
                 err = Some(e);
                 break;
-            }
+            },
         }
     }
 
     assert_eq!(
         items,
-        vec![
-            ControlLog {
-                group: "ENC".to_string(),
-                level: 1,
-                ikesa_name: "gw-gw".to_string(),
-                ikesa_uniqueid: 12,
-                msg: "failed to negotiate".to_string(),
-            },
-        ]
+        vec![ControlLog {
+            group: "ENC".to_string(),
+            level: 1,
+            ikesa_name: "gw-gw".to_string(),
+            ikesa_uniqueid: 12,
+            msg: "failed to negotiate".to_string(),
+        },]
     );
-    assert_eq!(
-        err.map(|e| e.to_string()),
-        Some("command failed - child initiation net-net failed".to_string())
-    );
+    assert_eq!(err.map(|e| e.to_string()), Some("command failed: child initiation net-net failed".to_string()));
 }
 
 #[tokio::test]
@@ -309,7 +306,7 @@ async fn stream_request_with_failure_no_errmsg() {
         ike: "gw-gw".to_string(),
         child: "net-net".to_string(),
     };
-    
+
     let stream = client.stream_request::<Initiate, ControlLog>("initiate", "control-log", initiate);
 
     pin_mut!(stream);
@@ -324,24 +321,19 @@ async fn stream_request_with_failure_no_errmsg() {
             Err(e) => {
                 err = Some(e);
                 break;
-            }
+            },
         }
     }
 
     assert_eq!(
         items,
-        vec![
-            ControlLog {
-                group: "ENC".to_string(),
-                level: 1,
-                ikesa_name: "gw-gw".to_string(),
-                ikesa_uniqueid: 12,
-                msg: "failed to negotiate".to_string(),
-            },
-        ]
+        vec![ControlLog {
+            group: "ENC".to_string(),
+            level: 1,
+            ikesa_name: "gw-gw".to_string(),
+            ikesa_uniqueid: 12,
+            msg: "failed to negotiate".to_string(),
+        },]
     );
-    assert_eq!(
-        err.map(|e| e.to_string()),
-        Some("command failed - unknown".to_string())
-    );
+    assert_eq!(err.map(|e| e.to_string()), Some("command failed".to_string()));
 }

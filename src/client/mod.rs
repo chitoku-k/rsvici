@@ -2,7 +2,7 @@ use core::option::Option::None;
 
 use async_stream::try_stream;
 use futures_util::Stream;
-use serde::{de::DeserializeOwned, Serialize, Deserialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use tokio::{
     io::{AsyncRead, AsyncWrite},
     sync::mpsc::{self, Sender, UnboundedSender},
@@ -32,12 +32,11 @@ type CommandSender = Sender<(Packet, Handler)>;
 type EventSender = Sender<(Packet, String, Registration, Handler)>;
 type ErrorHandlerSender = UnboundedSender<UnboundedSender<Error>>;
 
-
 #[derive(Deserialize)]
 /// A structure to handle all kind of CMD_RESPONSE
 struct Response {
-    success: Option<bool>,
-    errmsg: Option<String>
+    pub success: Option<bool>,
+    pub errmsg: Option<String>,
 }
 
 /// A structure to interact with the IKE daemon using the VICI protocol.
@@ -258,16 +257,7 @@ impl Client {
 
             match cmd_response.success {
                 Some(true) => {},
-                Some(false) => {
-                    match cmd_response.errmsg {
-                        Some(errmsg) => {
-                            Err(Error::data(ErrorCode::CommandFailed(errmsg)))?;
-                        },
-                        None => {
-                            Err(Error::data(ErrorCode::CommandFailed("unknown".to_string())))?;
-                        }
-                    }
-                },
+                Some(false) => Err(Error::data(ErrorCode::CommandFailed(cmd_response.errmsg)))?,
                 None => {},
             }
         }
