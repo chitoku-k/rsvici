@@ -1,5 +1,3 @@
-use core::option::Option::None;
-
 use rsvici::{Client, Error};
 
 use futures_util::{pin_mut, stream::TryStreamExt};

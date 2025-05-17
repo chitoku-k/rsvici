@@ -1,6 +1,6 @@
 //! Failures to interact with the IKE daemon.
 
-use core::{option::Option::None, result};
+use core::result;
 use std::{
     error,
     fmt::{self, Debug, Display},
@@ -120,7 +120,7 @@ impl From<Error> for io::Error {
             Category::Data => io::Error::new(io::ErrorKind::InvalidData, e),
             Category::Closed => io::Error::new(io::ErrorKind::BrokenPipe, e),
             Category::UnknownCmd | Category::UnknownEvent => io::Error::new(io::ErrorKind::Unsupported, e),
-            Category::CmdFailure => io::Error::new(io::ErrorKind::Other, e),
+            Category::CmdFailure => io::Error::other(e),
         }
     }
 }
