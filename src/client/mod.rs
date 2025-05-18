@@ -1,5 +1,3 @@
-use core::option::Option::None;
-
 use async_stream::try_stream;
 use futures_util::Stream;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
