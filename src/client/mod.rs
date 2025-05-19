@@ -31,10 +31,9 @@ type EventSender = Sender<(Packet, String, Registration, Handler)>;
 type ErrorHandlerSender = UnboundedSender<UnboundedSender<Error>>;
 
 #[derive(Deserialize)]
-/// A structure to handle all kind of CMD_RESPONSE
 struct Response {
-    pub success: Option<bool>,
-    pub errmsg: Option<String>,
+    success: Option<bool>,
+    errmsg: Option<String>,
 }
 
 /// A structure to interact with the IKE daemon using the VICI protocol.
@@ -213,7 +212,7 @@ impl Client {
                                 },
                                 Err(e) => {
                                     Err(Error::from(e))?;
-                                }
+                                },
                             }
                         },
                         PacketType::Event(_) => {
@@ -225,7 +224,7 @@ impl Client {
                                     Err(Error::from(e))?;
                                 }
                             }
-                        }
+                        },
                         packet_type => {
                             Err(Error::data(ErrorCode::UnexpectedPacket(packet_type.to_string())))?;
                         },

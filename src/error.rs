@@ -25,6 +25,7 @@ impl Error {
     /// - `Category::Io` - failure to read or write bytes on an IO stream
     /// - `Category::Data` - invalid data
     /// - `Category::Closed` - a listener or handler has already been closed
+    /// - `Category::CmdFailure` - failure to execute a command
     /// - `Category::UnknownCmd` - an unknown command request
     /// - `Category::UnknownEvent` - an unknown event request
     pub fn classify(&self) -> Category {
@@ -35,9 +36,9 @@ impl Error {
             | ErrorCode::HandlerClosedWhileCommandRequest
             | ErrorCode::HandlerClosedWhileEventRequest(_)
             | ErrorCode::HandlerClosedWhileStreaming(_) => Category::Closed,
+            ErrorCode::CommandFailed(_) => Category::CmdFailure,
             ErrorCode::UnknownCmd => Category::UnknownCmd,
             ErrorCode::UnknownEvent(_) => Category::UnknownEvent,
-            ErrorCode::CommandFailed(_) => Category::CmdFailure,
         }
     }
 
@@ -54,6 +55,11 @@ impl Error {
     /// Returns true if this error was caused by a listener or handler being already closed.
     pub fn is_closed(&self) -> bool {
         self.classify() == Category::Closed
+    }
+
+    /// Returns true if this error was caused by a failure to execute a command.
+    pub fn is_command_failed(&self) -> bool {
+        self.classify() == Category::CmdFailure
     }
 
     /// Returns true if this error was caused by an unknown command request.
@@ -91,13 +97,14 @@ pub enum Category {
     /// The error was caused by a listener or handler being already closed.
     Closed,
 
+    /// The error was caused by a failure to execute a command.
+    CmdFailure,
+
     /// The error was caused by an unknown command request.
     UnknownCmd,
 
     /// The error was caused by an unknown event request.
     UnknownEvent,
-
-    CmdFailure,
 }
 
 impl From<io::Error> for Error {
@@ -119,8 +126,8 @@ impl From<Error> for io::Error {
             },
             Category::Data => io::Error::new(io::ErrorKind::InvalidData, e),
             Category::Closed => io::Error::new(io::ErrorKind::BrokenPipe, e),
-            Category::UnknownCmd | Category::UnknownEvent => io::Error::new(io::ErrorKind::Unsupported, e),
             Category::CmdFailure => io::Error::other(e),
+            Category::UnknownCmd | Category::UnknownEvent => io::Error::new(io::ErrorKind::Unsupported, e),
         }
     }
 }
@@ -153,14 +160,14 @@ pub(crate) enum ErrorCode {
     /// Unexpected packet has been received, such as no handler is registered or unknown type is encountered.
     UnexpectedPacket(String),
 
+    /// Issued command failed.
+    CommandFailed(Option<String>),
+
     /// Unknown command has been requested.
     UnknownCmd,
 
     /// Unknown event has been requested.
     UnknownEvent(String),
-
-    /// Issued command failed.
-    CommandFailed(Option<String>),
 }
 
 impl Display for ErrorCode {
@@ -173,12 +180,12 @@ impl Display for ErrorCode {
             ErrorCode::HandlerClosedWhileEventRequest(ref event) => f.write_fmt(format_args!("handler has been closed while processing event: {event}")),
             ErrorCode::HandlerClosedWhileStreaming(ref packet_type) => f.write_fmt(format_args!("handler has been closed while processing {packet_type}")),
             ErrorCode::UnexpectedPacket(ref packet_type) => f.write_fmt(format_args!("unexpected packet type {packet_type}")),
-            ErrorCode::UnknownCmd => f.write_str("unknown command"),
-            ErrorCode::UnknownEvent(ref event) => f.write_fmt(format_args!("unknown event {event}")),
             ErrorCode::CommandFailed(ref reason) => match reason {
                 Some(errmsg) => f.write_fmt(format_args!("command failed: {errmsg}")),
-                None => f.write_fmt(format_args!("command failed")),
+                None => f.write_str("command failed"),
             },
+            ErrorCode::UnknownCmd => f.write_str("unknown command"),
+            ErrorCode::UnknownEvent(ref event) => f.write_fmt(format_args!("unknown event {event}")),
         }
     }
 }
