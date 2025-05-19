@@ -205,7 +205,7 @@ impl Client {
                 match rx.recv().await {
                     Some(Ok(packet)) => match packet.packet_type() {
                         PacketType::CmdResponse => {
-                            match packet.message::<Response>() {
+                            match packet.message() {
                                 Ok(resp) => {
                                     cmd_response = resp;
                                     break;
@@ -216,13 +216,13 @@ impl Client {
                             }
                         },
                         PacketType::Event(_) => {
-                            match packet.message::<U>() {
+                            match packet.message() {
                                 Ok(item) => {
                                     yield item;
                                 },
                                 Err(e) => {
                                     Err(Error::from(e))?;
-                                }
+                                },
                             }
                         },
                         packet_type => {
