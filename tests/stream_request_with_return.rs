@@ -110,7 +110,6 @@ async fn stream_request_with_success() {
 
     let stream = client.stream_request::<Initiate, ControlLog>("initiate", "control-log", initiate);
     let actual: Vec<ControlLog> = stream.try_collect().await.unwrap();
-
     assert_eq!(
         actual,
         vec![
@@ -205,7 +204,6 @@ async fn stream_request_with_failure() {
     };
 
     let stream = client.stream_request::<Initiate, ControlLog>("initiate", "control-log", initiate);
-
     pin_mut!(stream);
 
     let mut items: Vec<ControlLog> = Vec::new();
@@ -230,7 +228,7 @@ async fn stream_request_with_failure() {
             ikesa_name: "gw-gw".to_string(),
             ikesa_uniqueid: 12,
             msg: "failed to negotiate".to_string(),
-        },]
+        }]
     );
     assert_eq!(err.map(|e| e.to_string()), Some("command failed: child initiation net-net failed".to_string()));
 }
@@ -306,7 +304,6 @@ async fn stream_request_with_failure_no_errmsg() {
     };
 
     let stream = client.stream_request::<Initiate, ControlLog>("initiate", "control-log", initiate);
-
     pin_mut!(stream);
 
     let mut items: Vec<ControlLog> = Vec::new();
@@ -331,7 +328,7 @@ async fn stream_request_with_failure_no_errmsg() {
             ikesa_name: "gw-gw".to_string(),
             ikesa_uniqueid: 12,
             msg: "failed to negotiate".to_string(),
-        },]
+        }]
     );
     assert_eq!(err.map(|e| e.to_string()), Some("command failed".to_string()));
 }

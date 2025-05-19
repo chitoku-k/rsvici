@@ -213,7 +213,7 @@ impl Client {
                                 },
                                 Err(e) => {
                                     Err(Error::from(e))?;
-                                }
+                                },
                             }
                         },
                         PacketType::Event(_) => {
@@ -225,7 +225,7 @@ impl Client {
                                     Err(Error::from(e))?;
                                 }
                             }
-                        }
+                        },
                         packet_type => {
                             Err(Error::data(ErrorCode::UnexpectedPacket(packet_type.to_string())))?;
                         },
