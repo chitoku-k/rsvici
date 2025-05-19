@@ -1,6 +1,6 @@
 use async_stream::try_stream;
 use futures_util::Stream;
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use tokio::{
     io::{AsyncRead, AsyncWrite},
     sync::mpsc::{self, Sender, UnboundedSender},
@@ -29,6 +29,13 @@ type Handler = Sender<error::Result<Packet>>;
 type CommandSender = Sender<(Packet, Handler)>;
 type EventSender = Sender<(Packet, String, Registration, Handler)>;
 type ErrorHandlerSender = UnboundedSender<UnboundedSender<Error>>;
+
+#[derive(Deserialize)]
+/// A structure to handle all kind of CMD_RESPONSE
+struct Response {
+    pub success: Option<bool>,
+    pub errmsg: Option<String>,
+}
 
 /// A structure to interact with the IKE daemon using the VICI protocol.
 pub struct Client {
@@ -178,6 +185,7 @@ impl Client {
 
         try_stream! {
             let (tx, mut rx) = mpsc::channel(1);
+            let cmd_response: Response;
 
             let req = Packet::from(PacketType::EventRegister(event.clone()), ())?;
             events
@@ -196,17 +204,29 @@ impl Client {
 
             loop {
                 match rx.recv().await {
-                    Some(Ok(packet)) => match (packet.packet_type(), packet.message()) {
-                        (PacketType::CmdResponse, Ok(_)) => {
-                            break;
+                    Some(Ok(packet)) => match packet.packet_type() {
+                        PacketType::CmdResponse => {
+                            match packet.message::<Response>() {
+                                Ok(resp) => {
+                                    cmd_response = resp;
+                                    break;
+                                },
+                                Err(e) => {
+                                    Err(Error::from(e))?;
+                                }
+                            }
                         },
-                        (PacketType::Event(_), Ok(item)) => {
-                            yield item;
-                        },
-                        (PacketType::Event(_), Err(e)) => {
-                            Err(Error::from(e))?;
-                        },
-                        (packet_type, _) => {
+                        PacketType::Event(_) => {
+                            match packet.message::<U>() {
+                                Ok(item) => {
+                                    yield item;
+                                },
+                                Err(e) => {
+                                    Err(Error::from(e))?;
+                                }
+                            }
+                        }
+                        packet_type => {
                             Err(Error::data(ErrorCode::UnexpectedPacket(packet_type.to_string())))?;
                         },
                     },
@@ -231,6 +251,12 @@ impl Client {
                 Some(Ok(_)) => {},
                 Some(Err(e)) => Err(e)?,
                 None => Err(Error::data(ErrorCode::ListenerClosed))?,
+            }
+
+            match cmd_response.success {
+                Some(true) => {},
+                Some(false) => Err(Error::data(ErrorCode::CommandFailed(cmd_response.errmsg)))?,
+                None => {},
             }
         }
     }
