@@ -222,7 +222,7 @@ impl Client {
                                 },
                                 Err(e) => {
                                     Err(Error::from(e))?;
-                                }
+                                },
                             }
                         },
                         packet_type => {
