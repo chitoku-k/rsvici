@@ -52,7 +52,7 @@
 //! [Server-issued events]:      https://github.com/strongswan/strongswan/blob/5.9.5/src/libcharon/plugins/vici/README.md#server-issued-events
 
 #[doc(inline)]
-pub use crate::client::{tcp, unix, Client};
+pub use crate::client::*;
 #[doc(inline)]
 pub use crate::error::Error;
 
