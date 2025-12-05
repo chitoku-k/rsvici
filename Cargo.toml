@@ -41,7 +41,7 @@ version = "1.17"
 features = ["io-util", "macros", "net", "rt-multi-thread"]
 
 [dependencies.tokio-stream]
-version = "0.1"
+version = "0.1.17"
 
 [dev-dependencies.indexmap]
 version = "1.8"
