@@ -30,7 +30,7 @@ version = "0.2"
 version = "0.3"
 
 [dependencies.serde]
-version = "1.0"
+version = "1.0.228"
 features = ["derive"]
 
 [dependencies.serde_vici]
@@ -51,7 +51,7 @@ features = ["serde"]
 version = "1.1"
 
 [dev-dependencies.serde]
-version = "1.0"
+version = "1.0.228"
 features = ["derive"]
 
 [dev-dependencies.tokio-test]
