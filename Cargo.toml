@@ -34,7 +34,7 @@ version = "1.0"
 features = ["derive"]
 
 [dependencies.serde_vici]
-version = "0.1"
+version = "0.1.4"
 
 [dependencies.tokio]
 version = "1.17"
