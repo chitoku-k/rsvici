@@ -15,7 +15,7 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies.async-stream]
-version = "0.3"
+version = "0.3.6"
 
 [dependencies.bytes]
 version = "1.1"
