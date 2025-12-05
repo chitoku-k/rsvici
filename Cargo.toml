@@ -37,7 +37,7 @@ features = ["derive"]
 version = "0.1"
 
 [dependencies.tokio]
-version = "1.17"
+version = "1.48.0"
 features = ["io-util", "macros", "net", "rt-multi-thread"]
 
 [dependencies.tokio-stream]
