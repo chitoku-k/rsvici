@@ -77,7 +77,8 @@ impl Client {
     /// For the list of available commands, see [Client-initiated commands][].
     ///
     /// # Example
-    /// ```no_run
+    #[cfg_attr(unix, doc = "```no_run")]
+    #[cfg_attr(not(unix), doc = "```ignore")]
     /// use std::error::Error;
     ///
     /// use serde::Deserialize;
@@ -129,7 +130,8 @@ impl Client {
     /// You may also want to have a look at the documentation for [async-stream][] and [futures-util][].
     ///
     /// # Example
-    /// ```no_run
+    #[cfg_attr(unix, doc = "```no_run")]
+    #[cfg_attr(not(unix), doc = "```ignore")]
     /// use std::{
     ///     collections::HashMap,
     ///     error::Error,
@@ -268,7 +270,8 @@ impl Client {
     /// You may also want to have a look at the documentation for [async-stream][] and [futures-util][].
     ///
     /// # Example
-    /// ```no_run
+    #[cfg_attr(unix, doc = "```no_run")]
+    #[cfg_attr(not(unix), doc = "```ignore")]
     /// use std::error::Error;
     ///
     /// use futures_util::{
@@ -379,7 +382,8 @@ impl Client {
     /// Dropping the `Stream` will simply make the listener discard the background errors.
     ///
     /// # Example
-    /// ```no_run
+    #[cfg_attr(unix, doc = "```no_run")]
+    #[cfg_attr(not(unix), doc = "```ignore")]
     /// use std::error::Error;
     ///
     /// use futures_util::{
