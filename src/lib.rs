@@ -23,7 +23,8 @@
 //!
 //! Connecting to the IKE daemon and retrieving the version information looks like the following:
 //!
-//! ```no_run
+#![cfg_attr(unix, doc = "```no_run")]
+#![cfg_attr(not(unix), doc = "```ignore")]
 //! use std::error::Error;
 //!
 //! use serde::Deserialize;
