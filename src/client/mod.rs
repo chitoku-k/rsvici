@@ -50,10 +50,10 @@ impl Client {
     /// Typically it is more convenient to use either of the following methods instead:
     ///
     /// - [`rsvici::tcp::connect`]
-    /// - [`rsvici::unix::connect`]
+    #[cfg_attr(unix, doc = "- [`rsvici::unix::connect`]")]
     ///
     /// [`rsvici::tcp::connect`]: tcp::connect
-    /// [`rsvici::unix::connect`]: unix::connect
+    #[cfg_attr(unix, doc = "[`rsvici::unix::connect`]: unix::connect")]
     pub fn new<S>(session: S) -> Self
     where
         S: AsyncRead + AsyncWrite + Unpin + Send + 'static,
