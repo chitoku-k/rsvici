@@ -56,7 +56,7 @@ to the VICI protocol:
 * Sections with zero-based index are serialized to or deserialized from `Vec<T>`.
 
 [workflow-link]:             https://github.com/chitoku-k/rsvici/actions?query=branch:master
-[workflow-badge]:            https://img.shields.io/github/actions/workflow/status/chitoku-k/rsvici/ci.yml?branch=master&style=flat-square&logo=github
+[workflow-badge]:            https://img.shields.io/github/actions/workflow/status/chitoku-k/rsvici/test.yml?branch=master&style=flat-square&logo=github
 [docsrs-link]:               https://docs.rs/rsvici/
 [docsrs-badge]:              https://img.shields.io/docsrs/rsvici?style=flat-square
 [cratesio-link]:             https://crates.io/crates/rsvici
