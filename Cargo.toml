@@ -10,10 +10,6 @@ keywords = ["vici"]
 edition = "2021"
 readme = "README.md"
 
-[package.metadata.docs.rs]
-all-features = true
-rustdoc-args = ["--cfg", "docsrs"]
-
 [dependencies.async-stream]
 version = "0.3"
 
