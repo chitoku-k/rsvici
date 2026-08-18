@@ -1,9 +1,5 @@
 use std::{fmt::Display, io};
 
-use enum_index::{EnumIndex, IndexEnum};
-use enum_index_derive::{EnumIndex, IndexEnum};
-
-#[derive(EnumIndex, IndexEnum)]
 pub(crate) enum PacketType {
     /// A named request message.
     CmdRequest(String),
@@ -32,7 +28,30 @@ pub(crate) enum PacketType {
 
 impl PacketType {
     pub fn tag(&self) -> u8 {
-        self.enum_index() as u8
+        match self {
+            Self::CmdRequest(_) => 0,
+            Self::CmdResponse => 1,
+            Self::CmdUnknown => 2,
+            Self::EventRegister(_) => 3,
+            Self::EventUnregister(_) => 4,
+            Self::EventConfirm => 5,
+            Self::EventUnknown => 6,
+            Self::Event(_) => 7,
+        }
+    }
+
+    pub fn from_tag(tag: &u8) -> Option<Self> {
+        match tag {
+            0 => Some(Self::CmdRequest(Default::default())),
+            1 => Some(Self::CmdResponse),
+            2 => Some(Self::CmdUnknown),
+            3 => Some(Self::EventRegister(Default::default())),
+            4 => Some(Self::EventUnregister(Default::default())),
+            5 => Some(Self::EventConfirm),
+            6 => Some(Self::EventUnknown),
+            7 => Some(Self::Event(Default::default())),
+            _ => None,
+        }
     }
 
     pub fn marshal<W>(&self, writer: &mut W) -> io::Result<()>
@@ -55,9 +74,7 @@ impl PacketType {
     pub fn unmarshal(input: &[u8]) -> io::Result<(&[u8], Self)> {
         let (packet_type, input) = input.split_first().ok_or_else(|| io::Error::new(io::ErrorKind::UnexpectedEof, "EOF"))?;
 
-        let packet_type = *packet_type as usize;
-        let mut packet_type = PacketType::index_enum(packet_type).ok_or_else(|| io::Error::new(io::ErrorKind::Unsupported, "unknown type"))?;
-
+        let mut packet_type = PacketType::from_tag(packet_type).ok_or_else(|| io::Error::new(io::ErrorKind::Unsupported, "unknown type"))?;
         match packet_type {
             PacketType::CmdRequest(ref mut name)
             | PacketType::EventRegister(ref mut name)
