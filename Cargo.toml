@@ -8,7 +8,6 @@ repository = "https://github.com/chitoku-k/rsvici"
 documentation = "https://docs.rs/rsvici/latest/rsvici/"
 keywords = ["vici"]
 edition = "2021"
-readme = "README.md"
 
 [dependencies.async-stream]
 version = "0.3"
